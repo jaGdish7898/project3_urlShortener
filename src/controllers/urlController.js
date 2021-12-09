@@ -55,11 +55,18 @@
 
 
 const shortenUrl=async function(req,res){
-    let url=req.body.url
-    let uniqueCode=(Math.random() + 1).toString(36).substring(7);
+    let longUrl=req.body.url;
+    // let data=await urlModel.findOne({longUrl})
+    // if(data) return res.status(400).send({status:true,msg:})
+    let urlCode=(Math.random() + 1).toString(36).substring(7);
+    let baseUrl="http://localhost:3000/"
+    let shortUrl=baseUrl+urlCode;
+    res.send(shortUrl)
+
+
     
 }
-
+module.exports.shortenUrl=shortenUrl
 
 
 
