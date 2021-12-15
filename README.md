@@ -66,4 +66,44 @@ $push: { tags: { $each: req.body.tags } }, $push: { subcategory: { $each: req.bo
 
  if(req.query.authorId==authorId){   
                             //loggedin User(query authorid)
+
+
+                            const shortenUrl=async function(req,res){
+    try{
+        if(!isValidRequestBody(req.body)) {
+            return res.status(400).send({status: false, message: 'Invalid request parameters. Please provide blog details'})
+        }
+        let {longUrl}=req.body;
+        
+
+        if(!isValid(longUrl)) {
+            return res.status(400).send({status: false, message: 'Blog body is required'})
+            
+        }
+        //we will trim the link here if any one has passed it with spaces ,tovalidate its structure
+
+        if(!/(:?^((https|http|HTTP|HTTPS){1}:\/\/)(([w]{3})[\.]{1})?([a-zA-Z0-9]{1,}[\.])[\w]*((\/){1}([\w@?^=%&amp;~+#-_.]+))*)$/.test(longUrl)) {
+            res.status(400).send({status: false, message: `logoLink is not a valid URL`})
+            return
+        }
+
+        let data=await urlModel.findOne({longUrl})
+        if(data){
+            res.status(302).send({msg:"shorturl for this already exists",shortUrl:data.shortUrl})
+            return
+        }
+        let urlCode=(Math.random() + 1).toString(36).substring(7);
+        let baseUrl="http://localhost:3000/"
+        let shortUrl=baseUrl+urlCode;
+
+        let obj={longUrl,shortUrl,urlCode}
+        let savedData=await urlModel.create(obj)
+        
+        res.status(200).send({data:obj})
+    }
+    catch(err){
+        res.status(500).send({status:false,data:err})
+        console.log(err)
+    }
+}
       

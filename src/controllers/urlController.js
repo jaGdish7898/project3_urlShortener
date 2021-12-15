@@ -59,24 +59,11 @@ const shortenUrl=async function(req,res){
             return res.status(400).send({status: false, message: 'Blog body is required'})
             
         }
-        if(!(/(.com|.org|.co.in|.in)/.test(longUrl))){
-            return res.Status(400).send({status:false,msg:"Url is not valid"})
-        }
-        if((longUrl.includes("https://") && longUrl.match(/https:\/\//g).length!==1)||(longUrl.includes("http://") && longUrl.match(/http:\/\//g).length!==1) || (longUrl.includes("ftp://") && longUrl.match(/ftp:\/\//g).length!==1))
-        return res.status(400).send({status:false,msg:"Url is not valid"})
-        
-        if(longUrl.includes("w")&&(longUrl.indexOf("w")===6||longUrl.indexOf("w")===7||longUrl.indexOf("w")===8)){
-            let arr=[];
-            longUrl=longUrl.trim()
-            let i=longUrl.indexOf("w");
-            while(longUrl[i]=="w"){
-                if(longUrl[i]==="w"){
-                arr.push(longUrl[i])
-            }
-            i++
-        }
-        if(!(arr.length===3)) 
-        return res.status(400).send({status:false,msg:"Url is not valid"})
+        //we will trim the link here if any one has passed it with spaces ,to validate its structure
+
+        if(!/(:?^((https|http|HTTP|HTTPS){1}:\/\/)(([w]{3})[\.]{1})?([a-zA-Z0-9]{1,}[\.])[\w]*((\/){1}([\w@?^=%&amp;~+#-_.]+))*)$/.test(longUrl)) {
+            res.status(400).send({status: false, message: `logoLink is not a valid URL`})
+            return
         }
 
         let data=await urlModel.findOne({longUrl})
